@@ -5,6 +5,8 @@
  */
 package TimeKeeper;
 
+import Agenda.Meeting;
+import Agenda.User;
 import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.MouseInfo;
@@ -32,6 +34,7 @@ public class Keeper extends javax.swing.JDialog {
 
     private static boolean blinkOption = true;
     private static TrayManager trayManager;
+    private static User currentUser;
     private int meetingX = 0, meetingY = 0;
 
     /**
@@ -98,7 +101,17 @@ public class Keeper extends javax.swing.JDialog {
                     JOptionPane.ERROR_MESSAGE);
             Logger.getLogger(Keeper.class.getName()).log(Level.SEVERE, null, ex);
         }
+        checkUser();
         setVisible(true);
+    }
+
+    public static User getCurrentUser() {
+        return currentUser;
+    }
+
+    public static void setCurrentUser(User user) {
+        currentUser = user;
+        currentUser.checkAgenda();
     }
 
     public static void changeColor(Color color) {
@@ -127,10 +140,6 @@ public class Keeper extends javax.swing.JDialog {
             Logger.getLogger(Keeper.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    private void addMeeting(){
-        
-    }
 
     private void checkTime() {
         int hourText = Integer.parseInt(lblHour.getText());
@@ -146,6 +155,13 @@ public class Keeper extends javax.swing.JDialog {
         if (minuteText != minute) {
             String text = (minute < 10) ? "0" + minute : Integer.toString(minute);
             lblMinute.setText(text);
+        }
+    }
+
+    private void checkUser() {
+        User u = (User) FileUtil.get(FileUtil.LOGGED_USER);
+        if (u != null) {
+            setCurrentUser(u);
         }
     }
 

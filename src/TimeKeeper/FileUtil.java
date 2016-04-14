@@ -88,7 +88,7 @@ public class FileUtil {
             while (true) {
                 int title = (Integer) input.readObject();
                 Object object = input.readObject();
-                add(title, object);
+                addPrivate(title, object);
             }
         } catch (IOException | ClassNotFoundException ex) {
             if (ex instanceof EOFException) {
@@ -119,5 +119,9 @@ public class FileUtil {
             File file = new File(FILE);
             file.createNewFile();
         }
+    }
+    
+    private static void addPrivate(int title, Object object){
+        PROPS.put(title, object);
     }
 }

@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -18,10 +19,10 @@ import java.util.List;
 public class User implements Serializable{
 
     private String username, password, firstname, infix, lastname, address,
-            addressExtra, city, country;
+            addressExtra, city, country, postalCode;
     private int houseNumber;
     private Date birthday;
-    private Agenda agenda;
+    private final Agenda agenda;
 
     public User(String username, String password) throws CharNotSupportedException {
         this.username = username;
@@ -125,15 +126,19 @@ public class User implements Serializable{
         return agenda;
     }
 
-    public void setAgenda(Agenda agenda) {
-        this.agenda = agenda;
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
     }
 
     public void addMeeting(Meeting m) {
-
+        agenda.addMeeting(m);
     }
 
-    private int nextMeetingId() {
+    public int nextMeetingId() {
         int id = 0;
         List<Integer> ids = new ArrayList<>();
         for (List<Meeting> meetings : agenda.getMeetings().values()) {
@@ -146,5 +151,9 @@ public class User implements Serializable{
             id++;
         }
         return id;
+    }
+    
+    public void checkAgenda(){
+        agenda.doChecks();
     }
 }

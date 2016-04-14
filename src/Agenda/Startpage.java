@@ -5,6 +5,12 @@
  */
 package Agenda;
 
+import java.awt.Dimension;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import org.netbeans.lib.awtextra.AbsoluteConstraints;
+import org.netbeans.lib.awtextra.AbsoluteLayout;
+
 /**
  *
  * @author Dave van Rijn, Student 500714558, Klas IS202
@@ -16,6 +22,12 @@ public class Startpage extends javax.swing.JPanel {
      */
     public Startpage() {
         initComponents();
+        
+        JPanel test = new JPanel();
+        test.setPreferredSize(new Dimension(500, 500));
+        test.setLayout(new AbsoluteLayout());
+        test.add(new JButton("hoi"), new AbsoluteConstraints(0, 0, 100, 30));
+        add(test);
     }
 
     /**

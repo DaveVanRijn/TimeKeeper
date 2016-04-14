@@ -36,18 +36,15 @@ public class Main extends javax.swing.JFrame {
     private static final SimpleDateFormat dateForm = new SimpleDateFormat("dd/MM/yyyy");
 
     private final Stack<JPanel> panels;
-    
-    private User currentUser;
 
     /**
      * Creates new form Agenda
      */
     public Main() {
         initComponents();
-        FileUtil.read();
         panels = new Stack<>();
         pnlMain.setLayout(new BorderLayout());
-        if ((currentUser = (User) FileUtil.get(FileUtil.LOGGED_USER)) == null) {
+        if (Keeper.getCurrentUser() == null) {
             pnlMain.add(new Login(), BorderLayout.CENTER);
         } else {
             pnlMain.add(new Startpage(), BorderLayout.CENTER);
@@ -56,6 +53,8 @@ public class Main extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
+//        System.out.println("Test");
+//        test();
     }
 
     public static void setPanel(Object o) {
@@ -68,17 +67,9 @@ public class Main extends javax.swing.JFrame {
         mainframe.pack();
         mainframe.setLocationRelativeTo(null);
     }
-    
-    public static User getCurrentUser(){
-        return mainframe.currentUser;
-    }
-    
-    public static void setCurrentUser(User user){
-        mainframe.currentUser = user;
-    }
-    
-    public static void logout(){
-        mainframe.currentUser = null;
+
+    public static void logout() {
+        Keeper.setCurrentUser(null);
         mainframe.panels.clear();
         setPanel(new Login());
     }
@@ -88,33 +79,6 @@ public class Main extends javax.swing.JFrame {
         panels.pop();
         //Show previous panel
         setPanel(panels.pop());
-    }
-
-    public static void showNotifications(User user) {
-        try {
-            List<Meeting> notifies = new ArrayList<>();
-            Calendar cal = Calendar.getInstance();
-            Date date = dateForm.parse(getDateString(cal));
-            List<Meeting> list = user.getAgenda().getMeetings().get(cal.get(Calendar.YEAR));
-            for (Meeting m : list) {
-                if (m.getNotify() != null && m.getNotify().equals(date) && !m.isNotified()) {
-                    notifies.add(m);
-                    m.setNotified(true);
-                }
-            }
-            if (notifies.size() == 1) {
-                Meeting m = notifies.get(0);
-                Keeper.showMessage(m.getTitle() + " op "
-                        + dateForm.format(m.getStart()) + ".",
-                        TrayIcon.MessageType.INFO);
-            } else if (notifies.size() > 1) {
-                Keeper.showMessage("Je heb meerdere herinneringen voor "
-                        + "afspraken vandaag. Open de app om deze te bekijken.",
-                        TrayIcon.MessageType.INFO);
-            }
-        } catch (ParseException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 
     public static String getDateString(Date date) {
@@ -147,6 +111,49 @@ public class Main extends javax.swing.JFrame {
 
     public static String decrypt(String encrypted) throws CharNotSupportedException {
         return new EncryptionKey().decrypt(encrypted);
+    }
+
+    private void test() {
+        try {
+            System.out.println("Start test");
+            User testUser = new User("username", "password");
+            Calendar now = Calendar.getInstance();
+            Calendar birth = Calendar.getInstance();
+            birth.set(Calendar.DAY_OF_MONTH, 6);
+            birth.set(Calendar.MONTH, 9);
+            birth.set(Calendar.YEAR, 1994);
+            testUser.setAddress("Achterbos");
+            testUser.setBirthday(birth.getTime());
+            testUser.setCity("Vinkeveen");
+            testUser.setCountry("Nederland");
+            testUser.setFirstname("Dave");
+            testUser.setInfix("van");
+            testUser.setLastname("Rijn");
+            testUser.setHouseNumber(75);
+            testUser.setPostalCode("3645CB");
+
+            Meeting m1 = new Meeting(testUser.nextMeetingId(), "Test 1",
+                    "First test meeting", "Home", now.getTime(),
+                    now.getTime(), null);
+
+            Meeting m2 = new Meeting(testUser.nextMeetingId(), "Test 2",
+                    "Second test meeting", "School", now.getTime(), now.getTime(),
+                    null);
+
+            Calendar noti = (Calendar) now.clone();
+            now.set(Calendar.DAY_OF_MONTH, now.get(Calendar.DAY_OF_MONTH) + 1);
+            Meeting m3 = new Meeting(testUser.nextMeetingId(), "Test 3",
+                    "Third test meeting", "Somewhere", now.getTime(), now.getTime(), noti.getTime());
+
+            testUser.addMeeting(m1);
+            testUser.addMeeting(m2);
+            testUser.addMeeting(m3);
+
+            Keeper.setCurrentUser(testUser);
+
+        } catch (CharNotSupportedException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**

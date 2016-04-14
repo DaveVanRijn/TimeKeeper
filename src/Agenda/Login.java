@@ -7,6 +7,7 @@ package Agenda;
 
 import Exception.CharNotSupportedException;
 import TimeKeeper.FileUtil;
+import TimeKeeper.Keeper;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -32,11 +33,11 @@ public class Login extends javax.swing.JPanel {
                 String encryptedPass = Main.encrypt(password);
                 for (User u : users) {
                     if (u.getPassword().equals(encryptedPass)) {
-                        Main.setCurrentUser(u);
+                        Keeper.setCurrentUser(u);
                         break;
                     }
                 }
-                if (Main.getCurrentUser() != null) {
+                if (Keeper.getCurrentUser() != null) {
                     Main.setPanel(new Startpage());
                 } else {
                     falseLogin();

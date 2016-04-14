@@ -7,6 +7,7 @@ package TimeKeeper;
 
 import java.awt.AWTException;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Image;
 import java.awt.Menu;
 import java.awt.MenuItem;
@@ -16,6 +17,8 @@ import java.awt.TrayIcon;
 import java.awt.TrayIcon.MessageType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JColorChooser;
 
@@ -26,8 +29,8 @@ import javax.swing.JColorChooser;
 public class TrayManager {
 
     private static final String CAPTION = "TimeKeeper";
-    private static final Color ORANGE = new Color(255, 102 ,0), BLUE = new Color(51, 102, 255);
-    
+    private static final Color ORANGE = new Color(255, 102, 0), BLUE = new Color(51, 102, 255);
+
     private static TrayIcon icon;
     private static SystemTray tray;
     private static Image image;
@@ -50,6 +53,10 @@ public class TrayManager {
         icon.displayMessage(CAPTION, message, type);
     }
 
+    private static void remove() {
+        tray.remove(icon);
+    }
+
     private static void init() throws AWTException {
         tray = SystemTray.getSystemTray();
         image = new ImageIcon(TrayManager.class.getResource("/Resource/clock.png")).getImage();
@@ -60,6 +67,7 @@ public class TrayManager {
         MenuItem exit = new MenuItem("Sluiten");
         MenuItem hide = new MenuItem("Verberg");
         MenuItem show = new MenuItem("Toon");
+        MenuItem open = new MenuItem("Open App");
 
         //Color options
         MenuItem orange = new MenuItem("  Oranje");
@@ -84,6 +92,7 @@ public class TrayManager {
         exit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                remove();
                 System.exit(0);
             }
         });
@@ -130,6 +139,19 @@ public class TrayManager {
             }
         });
 
+        open.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Thread th = new Thread() {
+                    @Override
+                    public void run() {
+                        new Agenda.Main();
+                    }
+                };
+                th.start();
+            }
+        });
+
         //Build up
         color.add(orange);
         color.add(blue);
@@ -140,12 +162,15 @@ public class TrayManager {
         blink.add(blinkOn);
         blink.add(blinkOff);
 
+        popup.add(open);
         popup.add(color);
         popup.add(blink);
         popup.add(show);
         popup.add(hide);
         popup.addSeparator();
         popup.add(exit);
+
+        open.setFont(new Font("Tahoma", Font.BOLD, 12));
 
         //Enablings
         show.setEnabled(false);
@@ -154,13 +179,22 @@ public class TrayManager {
         //Make icon
         icon = new TrayIcon(image, CAPTION, popup);
         icon.setImageAutoSize(true);
-
+        icon.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    Thread th = new Thread() {
+                        @Override
+                        public void run() {
+                            new Agenda.Main();
+                        }
+                    };
+                    th.start();
+                }
+            }
+        });
         tray.add(icon);
         initialized = true;
-
-        //Notify icon is added
-        showMessage("Klik op dit icoon voor opties.", MessageType.INFO);
-
     }
 
     private static ActionListener getColorListener(Color color, MenuItem item, Menu menu) {
@@ -172,13 +206,13 @@ public class TrayManager {
             }
         };
     }
-    
-    private static void setColorLabels(Menu menu, MenuItem item){
+
+    private static void setColorLabels(Menu menu, MenuItem item) {
         int menuItems = menu.getItemCount();
-        for(int i = 0; i < menuItems; i++){
+        for (int i = 0; i < menuItems; i++) {
             MenuItem m = menu.getItem(i);
             String prefix;
-            if(m == item){
+            if (m == item) {
                 prefix = "* ";
             } else {
                 prefix = "  ";
