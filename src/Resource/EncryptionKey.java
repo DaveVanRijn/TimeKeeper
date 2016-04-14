@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Agenda;
+package Resource;
 
+import Exception.CharNotSupportedException;
 import java.util.HashMap;
 import java.util.Map;
 

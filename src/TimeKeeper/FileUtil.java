@@ -24,26 +24,26 @@ import java.util.logging.Logger;
  */
 public class FileUtil {
 
-    public static final String COLOR = "Color";
+    public static final int COLOR = 0, LOGGED_USER = 1, USERS = 2;
     private static final String DIR = System.getProperty("user.home") + "\\TimeKeeper";
     private static final String FILE = DIR + "\\props.tk";
-    private static final Map<String, Object> PROPS = new TreeMap<>();
+    private static final Map<Integer, Object> PROPS = new TreeMap<>();
 
-    public static void add(String title, Object object) {
+    public static void add(int title, Object object) {
         PROPS.put(title, object);
         write();
     }
 
-    public static Object get(String title) {
+    public static Object get(int title) {
         return PROPS.get(title);
     }
 
-    public static Object remove(String title) {
+    public static Object remove(int title) {
         return PROPS.remove(title);
     }
 
     public static Object remove(Object object) {
-        for (Entry<String, Object> e : PROPS.entrySet()) {
+        for (Entry<Integer, Object> e : PROPS.entrySet()) {
             if (e.getValue() == object) {
                 return remove(e.getKey());
             }
@@ -59,7 +59,7 @@ public class FileUtil {
             try {
                 init();
                 output = new ObjectOutputStream(new FileOutputStream(file));
-                for (Entry<String, Object> e : PROPS.entrySet()) {
+                for (Entry<Integer, Object> e : PROPS.entrySet()) {
                     output.writeObject(e.getKey());
                     output.writeObject(e.getValue());
                 }
@@ -86,7 +86,7 @@ public class FileUtil {
             init();
             input = new ObjectInputStream(new FileInputStream(file));
             while (true) {
-                String title = (String) input.readObject();
+                int title = (Integer) input.readObject();
                 Object object = input.readObject();
                 add(title, object);
             }

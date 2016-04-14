@@ -32,6 +32,7 @@ public class Keeper extends javax.swing.JDialog {
 
     private static boolean blinkOption = true;
     private static TrayManager trayManager;
+    private int meetingX = 0, meetingY = 0;
 
     /**
      * Creates new form Keeper
@@ -51,6 +52,8 @@ public class Keeper extends javax.swing.JDialog {
         pnlTime.setOpaque(false);
         pnlDateInfo.setOpaque(false);
         pnlDateInfo.setVisible(false);
+        pnlMeetings.setOpaque(false);
+        pnlMeetings.setVisible(false);
 
         Calendar cal = Calendar.getInstance();
         int hour = cal.get(Calendar.HOUR_OF_DAY);
@@ -123,6 +126,10 @@ public class Keeper extends javax.swing.JDialog {
         } catch (AWTException ex) {
             Logger.getLogger(Keeper.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    private void addMeeting(){
+        
     }
 
     private void checkTime() {
@@ -219,12 +226,14 @@ public class Keeper extends javax.swing.JDialog {
         lblDate.setText(date);
         lblWeek.setText("Week " + week);
         pnlDateInfo.setVisible(true);
+        pnlMeetings.setVisible(true);
         this.pack();
     }
 
     private void hideDetails() {
         this.setBackground(new Color(0, 0, 0, 0));
         pnlDateInfo.setVisible(false);
+        pnlMeetings.setVisible(false);
     }
 
     private static void saveColor(Color color) {
@@ -257,6 +266,7 @@ public class Keeper extends javax.swing.JDialog {
         lblDay = new javax.swing.JLabel();
         lblDate = new javax.swing.JLabel();
         lblWeek = new javax.swing.JLabel();
+        pnlMeetings = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -312,19 +322,33 @@ public class Keeper extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
+        javax.swing.GroupLayout pnlMeetingsLayout = new javax.swing.GroupLayout(pnlMeetings);
+        pnlMeetings.setLayout(pnlMeetingsLayout);
+        pnlMeetingsLayout.setHorizontalGroup(
+            pnlMeetingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        pnlMeetingsLayout.setVerticalGroup(
+            pnlMeetingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 106, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(pnlTime, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(pnlDateInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(pnlMeetings, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(pnlTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(pnlDateInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 109, Short.MAX_VALUE))
+                .addComponent(pnlDateInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(pnlMeetings, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -374,6 +398,7 @@ public class Keeper extends javax.swing.JDialog {
     private static javax.swing.JLabel lblSecond;
     private static javax.swing.JLabel lblWeek;
     private static javax.swing.JPanel pnlDateInfo;
+    private static javax.swing.JPanel pnlMeetings;
     private static javax.swing.JPanel pnlTime;
     // End of variables declaration//GEN-END:variables
 }

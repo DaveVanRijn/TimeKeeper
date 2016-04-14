@@ -26,7 +26,8 @@ import javax.swing.JColorChooser;
 public class TrayManager {
 
     private static final String CAPTION = "TimeKeeper";
-
+    private static final Color ORANGE = new Color(255, 102 ,0), BLUE = new Color(51, 102, 255);
+    
     private static TrayIcon icon;
     private static SystemTray tray;
     private static Image image;
@@ -51,7 +52,7 @@ public class TrayManager {
 
     private static void init() throws AWTException {
         tray = SystemTray.getSystemTray();
-        image = new ImageIcon(TrayManager.class.getResource("/TimeKeeper/clock.png")).getImage();
+        image = new ImageIcon(TrayManager.class.getResource("/Resource/clock.png")).getImage();
         popup = new PopupMenu();
 
         //MenuItems
@@ -76,10 +77,10 @@ public class TrayManager {
         Menu blink = new Menu("Knipperen");
 
         //ActionListeners
-        orange.addActionListener(getColorListener(new Color(255, 102, 0), orange, color));
-        blue.addActionListener(getColorListener(new Color(51, 102, 255), blue, color));
-        black.addActionListener(getColorListener(new Color(0, 0, 0), black, color));
-        white.addActionListener(getColorListener(new Color(255, 255, 255), white, color));
+        orange.addActionListener(getColorListener(ORANGE, orange, color));
+        blue.addActionListener(getColorListener(BLUE, blue, color));
+        black.addActionListener(getColorListener(Color.BLACK, black, color));
+        white.addActionListener(getColorListener(Color.WHITE, white, color));
         exit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -105,8 +106,7 @@ public class TrayManager {
         otherColor.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Color black = new Color(0, 0, 0);
-                Color newColor = JColorChooser.showDialog(null, "Kies een kleur", black);
+                Color newColor = JColorChooser.showDialog(null, "Kies een kleur", Color.BLACK);
                 if (newColor != null) {
                     Keeper.changeColor(newColor);
                     setColorLabels(color, otherColor);

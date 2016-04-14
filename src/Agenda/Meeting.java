@@ -96,6 +96,16 @@ public class Meeting implements Serializable, Comparable<Meeting>{
         cal.setTime(start);
         return cal.get(Calendar.YEAR);
     }
+    
+    public String getTime(){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(start);
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
+        int minute = cal.get(Calendar.MINUTE);
+        String hourString = (hour < 10)? "0" + hour : Integer.toString(hour);
+        String minuteString = (minute < 10)? "0" + minute : Integer.toString(minute);
+        return hourString + ":" + minuteString + ":00";
+    }
 
     @Override
     public int compareTo(Meeting o) {

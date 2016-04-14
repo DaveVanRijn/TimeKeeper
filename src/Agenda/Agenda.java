@@ -12,6 +12,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -24,6 +25,17 @@ import java.util.logging.Logger;
 public class Agenda implements Serializable{
     
     private Map<Integer, List<Meeting>> meetings;
+    
+    public Agenda(){
+        meetings = new HashMap<>();
+    }
+    
+    public void addMeeting(Meeting m){
+        if(!meetings.containsKey(m.getYear())){
+            meetings.put(m.getYear(), new ArrayList<>());
+        }
+        meetings.get(m.getYear()).add(m);
+    }
     
     public Map<Integer, List<Meeting>> getMeetings(){
         return meetings;
@@ -52,7 +64,8 @@ public class Agenda implements Serializable{
                 Keeper.showMessage("Je heb meerdere afspraken vandaag. "
                         + "Open TimeKeeper voor details.", TrayIcon.MessageType.INFO);
             } else if (meets.size() == 1){
-                Keeper.showMessage(meets.get(0).getTitle() + " vindt vandaag plaats.", TrayIcon.MessageType.INFO);
+                String time = meets.get(0).getTime();
+                Keeper.showMessage(meets.get(0).getTitle() + " om " + time.substring(0, time.length() - 4) + ".", TrayIcon.MessageType.INFO);
             }
         } catch (ParseException ex) {
             Logger.getLogger(Agenda.class.getName()).log(Level.SEVERE, null, ex);

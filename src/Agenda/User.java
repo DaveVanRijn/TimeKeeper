@@ -5,6 +5,7 @@
  */
 package Agenda;
 
+import Exception.CharNotSupportedException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,6 +26,7 @@ public class User implements Serializable{
     public User(String username, String password) throws CharNotSupportedException {
         this.username = username;
         this.password = Main.encrypt(password);
+        agenda = new Agenda();
     }
 
     public String getUsername() {
