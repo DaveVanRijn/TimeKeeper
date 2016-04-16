@@ -13,3 +13,6 @@ hs_err_pid*
 /dist/
 /build/
 nbproject/private/private.xml
+/Agenda/TK-Agenda/nbproject/private/
+/TK-Agenda/dist/
+/TK-Agenda/build/
