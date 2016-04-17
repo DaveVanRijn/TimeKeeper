@@ -7,14 +7,10 @@ package Agenda;
 
 import Resource.EncryptionKey;
 import Exception.CharNotSupportedException;
-import TimeKeeper.FileUtil;
-import java.awt.TrayIcon;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import TimeKeeper.Keeper;
@@ -134,16 +130,16 @@ public class Main extends javax.swing.JFrame {
 
             Meeting m1 = new Meeting(testUser.nextMeetingId(), "Test 1",
                     "First test meeting", "Home", now.getTime(),
-                    now.getTime(), null);
+                    now.getTime());
 
             Meeting m2 = new Meeting(testUser.nextMeetingId(), "Test 2",
-                    "Second test meeting", "School", now.getTime(), now.getTime(),
-                    null);
+                    "Second test meeting", "School", now.getTime(), now.getTime());
 
             Calendar noti = (Calendar) now.clone();
             now.set(Calendar.DAY_OF_MONTH, now.get(Calendar.DAY_OF_MONTH) + 1);
             Meeting m3 = new Meeting(testUser.nextMeetingId(), "Test 3",
-                    "Third test meeting", "Somewhere", now.getTime(), now.getTime(), noti.getTime());
+                    "Third test meeting", "Somewhere", now.getTime(), now.getTime());
+            m3.addNotify(noti.getTime());
 
             testUser.addMeeting(m1);
             testUser.addMeeting(m2);

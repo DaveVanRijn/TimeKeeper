@@ -20,6 +20,7 @@ import java.awt.event.MouseEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
@@ -151,10 +152,27 @@ public class Keeper extends javax.swing.JDialog {
         if (hourText != hour) {
             String text = (hour < 10) ? "0" + hour : Integer.toString(hour);
             lblHour.setText(text);
+            if (currentUser != null) {
+                currentUser.getAgenda().checkNotifications();
+            }
         }
         if (minuteText != minute) {
             String text = (minute < 10) ? "0" + minute : Integer.toString(minute);
             lblMinute.setText(text);
+            refresh();
+        }
+    }
+
+    private void refresh() {
+        FileUtil.read();
+        if (currentUser != null) {
+            String username = currentUser.getUsername();
+            for (User u : (List<User>) FileUtil.get(FileUtil.USERS)) {
+                if (u.getUsername().equals(username)) {
+                    currentUser = u;
+                    break;
+                }
+            }
         }
     }
 
@@ -162,6 +180,14 @@ public class Keeper extends javax.swing.JDialog {
         User u = (User) FileUtil.get(FileUtil.LOGGED_USER);
         if (u != null) {
             setCurrentUser(u);
+        }
+    }
+    
+    private void setMeetingPanel(){
+        Calendar today = Calendar.getInstance();
+        List<Meeting> meetings = currentUser.getAgenda().getMeetings().get(today.get(Calendar.YEAR));
+        for(Meeting m : meetings){
+            
         }
     }
 
@@ -242,7 +268,9 @@ public class Keeper extends javax.swing.JDialog {
         lblDate.setText(date);
         lblWeek.setText("Week " + week);
         pnlDateInfo.setVisible(true);
-        pnlMeetings.setVisible(true);
+        if (currentUser != null) {
+            pnlMeetings.setVisible(true);
+        }
         this.pack();
     }
 

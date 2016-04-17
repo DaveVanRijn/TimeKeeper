@@ -19,6 +19,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JColorChooser;
 
@@ -145,7 +148,7 @@ public class TrayManager {
                 Thread th = new Thread() {
                     @Override
                     public void run() {
-                        new Agenda.Main();
+                        openAgenda();
                     }
                 };
                 th.start();
@@ -163,6 +166,7 @@ public class TrayManager {
         blink.add(blinkOff);
 
         popup.add(open);
+        popup.addSeparator();
         popup.add(color);
         popup.add(blink);
         popup.add(show);
@@ -186,7 +190,7 @@ public class TrayManager {
                     Thread th = new Thread() {
                         @Override
                         public void run() {
-                            new Agenda.Main();
+                            openAgenda();
                         }
                     };
                     th.start();
@@ -218,6 +222,16 @@ public class TrayManager {
                 prefix = "  ";
             }
             m.setLabel(prefix + m.getLabel().substring(2));
+        }
+    }
+
+    private static void openAgenda() {
+        String app = System.getProperty("user.dir") + "\\TK-Agenda.jar";
+        try {
+            Runtime.getRuntime().exec(new String[]{"cmd.exe", "/c", "java -jar " + app});
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            Logger.getLogger(TrayManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

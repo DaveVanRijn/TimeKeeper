@@ -3,14 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Agenda;
+package Object;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 
 /**
  *
@@ -22,18 +19,18 @@ public class Meeting implements Serializable, Comparable<Meeting> {
 
     private final int id;
     private String title, description, location;
-    private Date start, end;
-    private final List<Date> notifies;
+    private Date start, end, notify;
+    private boolean notified;
 
     public Meeting(int id, String title, String description, String location,
-            Date start, Date end) {
+            Date start, Date end, Date notify) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.location = location;
         this.start = start;
         this.end = end;
-        this.notifies = new ArrayList<>();
+        this.notify = notify;
     }
 
     public int getId() {
@@ -80,24 +77,20 @@ public class Meeting implements Serializable, Comparable<Meeting> {
         this.end = end;
     }
 
-    public List<Date> getNotifies() {
-        return notifies;
-    }
-
-    public void addNotify(Date notify) {
-        notifies.add(notify);
-        Collections.sort(notifies);
-    }
-
-    public Date peekNotify() {
-        if(notifies.isEmpty()){
-            return null;
-        }
-        return notifies.get(0);
-    }
-
     public Date getNotify() {
-        return notifies.remove(0);
+        return notify;
+    }
+
+    public void setNotify(Date notify) {
+        this.notify = notify;
+    }
+
+    public boolean isNotified() {
+        return notified;
+    }
+
+    public void setNotified(boolean notified) {
+        this.notified = notified;
     }
 
     public int getYear() {
@@ -120,4 +113,5 @@ public class Meeting implements Serializable, Comparable<Meeting> {
     public int compareTo(Meeting o) {
         return start.compareTo(o.getStart());
     }
+
 }

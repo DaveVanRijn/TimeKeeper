@@ -24,7 +24,9 @@ import java.util.logging.Logger;
  */
 public class Agenda implements Serializable {
 
-    private Map<Integer, List<Meeting>> meetings;
+    private static final long serialVersionUID = 1L;
+
+    private final Map<Integer, List<Meeting>> meetings;
 
     public Agenda() {
         meetings = new HashMap<>();
@@ -53,10 +55,9 @@ public class Agenda implements Serializable {
             Date today = Main.getDate(cal);
 
             for (Meeting m : meetings.get(cal.get(Calendar.YEAR))) {
-                if (Main.getDateString(m.getStart()).equals(Main.getDateString(today)) && !m.isNotified()) {
+                if (Main.getDateString(m.getStart()).equals(Main.getDateString(today))) {
                     meets.add(m);
-                }
-                if (m.getStart().before(today) && m.getStart().after(today) && !m.isNotified()) {
+                } else if (m.getStart().before(today) && m.getEnd().after(today)) {
                     meets.add(m);
                 }
             }
@@ -72,7 +73,7 @@ public class Agenda implements Serializable {
         }
     }
 
-    private void checkNotifications() {
+    public void checkNotifications() {
         try {
             List<Meeting> notifies = new ArrayList<>();
             Calendar cal = Calendar.getInstance();
@@ -80,9 +81,10 @@ public class Agenda implements Serializable {
             Date date = Main.getDate(cal);
             List<Meeting> list = getMeetings().get(cal.get(Calendar.YEAR));
             for (Meeting m : list) {
-                if (m.getNotify() != null && Main.getDateString(m.getNotify()).equals(Main.getDateString(date)) && !m.isNotified()) {
+                Date notification = m.peekNotify();
+                if (notification != null && Main.getDateString(notification).equals(Main.getDateString(date))) {
+                    m.getNotify();
                     notifies.add(m);
-                    m.setNotified(true);
                 }
             }
             if (notifies.size() == 1) {
