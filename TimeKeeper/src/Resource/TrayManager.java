@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package TimeKeeper;
+package Resource;
 
+import TimeKeeper.Keeper;
 import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Font;
@@ -19,9 +20,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JColorChooser;
 
@@ -39,13 +37,15 @@ public class TrayManager {
     private static Image image;
     private static PopupMenu popup;
     private static boolean initialized;
+    private static Keeper keeper;
 
-    public TrayManager() throws AWTException {
+    public TrayManager(Keeper keeper) throws AWTException {
         icon = null;
         tray = null;
         image = null;
         popup = null;
         initialized = false;
+        this.keeper = keeper;
         init();
     }
 
@@ -56,7 +56,7 @@ public class TrayManager {
         icon.displayMessage(CAPTION, message, type);
     }
 
-    private static void remove() {
+    public static void remove() {
         tray.remove(icon);
     }
 
@@ -120,7 +120,7 @@ public class TrayManager {
             public void actionPerformed(ActionEvent e) {
                 Color newColor = JColorChooser.showDialog(null, "Kies een kleur", Color.BLACK);
                 if (newColor != null) {
-                    Keeper.changeColor(newColor);
+                    Keeper.changeColor(newColor, keeper);
                     setColorLabels(color, otherColor);
                 }
             }
@@ -145,13 +145,8 @@ public class TrayManager {
         open.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Thread th = new Thread() {
-                    @Override
-                    public void run() {
-                        openAgenda();
-                    }
-                };
-                th.start();
+                FileUtil.add(FileUtil.SELECTED_MEETING, null);
+                Keeper.openAgenda();
             }
         });
 
@@ -187,13 +182,7 @@ public class TrayManager {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1) {
-                    Thread th = new Thread() {
-                        @Override
-                        public void run() {
-                            openAgenda();
-                        }
-                    };
-                    th.start();
+                    Keeper.openAgenda();
                 }
             }
         });
@@ -205,7 +194,7 @@ public class TrayManager {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Keeper.changeColor(color);
+                Keeper.changeColor(color, keeper);
                 setColorLabels(menu, item);
             }
         };
@@ -222,16 +211,6 @@ public class TrayManager {
                 prefix = "  ";
             }
             m.setLabel(prefix + m.getLabel().substring(2));
-        }
-    }
-
-    private static void openAgenda() {
-        String app = System.getProperty("user.dir") + "\\TK-Agenda.jar";
-        try {
-            Runtime.getRuntime().exec(new String[]{"cmd.exe", "/c", "java -jar " + app});
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            Logger.getLogger(TrayManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

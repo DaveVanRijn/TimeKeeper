@@ -8,10 +8,12 @@ package View;
 import Exception.CharNotSupportedException;
 import Main.Main;
 import Object.User;
+import Resource.EncryptionKey;
 import Resource.FileUtil;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -40,23 +42,28 @@ public class Login extends javax.swing.JPanel {
                         }
                     }
                 }
-                falseLogin("Combi");
+                falseLogin("Combi", null);
             } catch (CharNotSupportedException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-                falseLogin("Pass");
+                falseLogin("Pass", password);
             }
         } else {
-            falseLogin("Combi");
+            falseLogin("Combi", null);
         }
     }
 
-    private void falseLogin(String source) {
+    private void falseLogin(String source, String pass) {
         switch (source) {
             case "Combi":
-
+                JOptionPane.showMessageDialog(null, "Ongeldige combinatie van"
+                        + " gebruikersnaam en wachtwoord.", "Fout",
+                        JOptionPane.ERROR_MESSAGE);
                 break;
             case "Pass":
-
+                String notSupported = new EncryptionKey().isSupported(pass);
+                JOptionPane.showMessageDialog(null, "'" + notSupported
+                        + "' kan niet in het wachtwoord gebruikt worden.",
+                        "Fout", JOptionPane.ERROR_MESSAGE);
                 break;
         }
     }

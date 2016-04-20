@@ -3,31 +3,27 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Agenda;
+package View;
 
-import java.awt.Dimension;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import org.netbeans.lib.awtextra.AbsoluteConstraints;
-import org.netbeans.lib.awtextra.AbsoluteLayout;
+import Object.Meeting;
 
 /**
  *
  * @author Dave van Rijn, Student 500714558, Klas IS202
  */
-public class Startpage extends javax.swing.JPanel {
+public class MeetingDetail extends javax.swing.JPanel {
 
+    Meeting meeting;
     /**
-     * Creates new form Startpage
+     * Creates new form MeetingDetail
      */
-    public Startpage() {
+    private MeetingDetail() {
         initComponents();
-        
-        JPanel test = new JPanel();
-        test.setPreferredSize(new Dimension(500, 500));
-        test.setLayout(new AbsoluteLayout());
-        test.add(new JButton("hoi"), new AbsoluteConstraints(0, 0, 100, 30));
-        add(test);
+    }
+    
+    public MeetingDetail(Meeting meeting){
+        this();
+        this.meeting = meeting;
     }
 
     /**

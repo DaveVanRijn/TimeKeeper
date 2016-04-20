@@ -24,7 +24,7 @@ import java.util.logging.Logger;
  */
 public class FileUtil {
 
-    public static final int COLOR = 0, LOGGED_USER = 1, USERS = 2;
+    public static final int COLOR = 0, LOGGED_USER = 1, USERS = 2, SELECTED_MEETING = 3;
     private static final String DIR = System.getProperty("user.home") + "\\TimeKeeper";
     private static final String FILE = DIR + "\\props.tk";
     private static final Map<Integer, Object> PROPS = new TreeMap<>();

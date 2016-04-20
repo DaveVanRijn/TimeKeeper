@@ -27,8 +27,8 @@ public class CharNotSupportedException extends Exception {
     public CharNotSupportedException(String msg) {
         super(msg);
     }
-    
-    public CharNotSupportedException(char c){
+
+    public CharNotSupportedException(char c) {
         super("Character " + c + " is not supported by this key.");
     }
 }

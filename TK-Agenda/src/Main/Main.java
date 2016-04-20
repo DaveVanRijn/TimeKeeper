@@ -6,22 +6,29 @@
 package Main;
 
 import Exception.CharNotSupportedException;
+import Object.Meeting;
 import Object.User;
 import Resource.EncryptionKey;
 import Resource.FileUtil;
 import View.Login;
+import View.MeetingDetail;
+import View.Register;
 import View.Startpage;
 import java.awt.BorderLayout;
-import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.List;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.Timer;
+import javax.swing.WindowConstants;
 
 /**
  *
@@ -49,19 +56,31 @@ public class Main extends javax.swing.JFrame {
         pnlMain.setLayout(new BorderLayout());
 
         FileUtil.read();
-        User loggedUser = (User) FileUtil.get(FileUtil.LOGGED_USER);
 
-        JPanel panel;
-        if (loggedUser == null) {
-            panel = new Login();
-        } else {
-            currentUser = loggedUser;
-            panel = new Startpage();
-        }
+        JPanel panel = getStartPanel();
 
         pnlMain.add(panel, BorderLayout.CENTER);
 
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                int option = JOptionPane.showOptionDialog(null,
+                        "Weet je zeker dat je wil afsluiten?", "Bevestig",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+                        new Object[]{"Ja", "Nee"}, "Nee");
+                if (option == JOptionPane.YES_OPTION) {
+                    System.exit(0);
+                }
+            }
+        });
+
+        Timer timer = new Timer(15000, null);
+        timer.addActionListener(timerAction());
+        timer.start();
+
         pack();
+        setResizable(false);
         setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -101,12 +120,40 @@ public class Main extends javax.swing.JFrame {
         return new EncryptionKey().decrypt(text);
     }
 
+    private static JPanel getStartPanel() {
+        User current = (User) FileUtil.get(FileUtil.LOGGED_USER);
+        Meeting selected = (Meeting) FileUtil.get(FileUtil.SELECTED_MEETING);
+        List<User> users = (List<User>) FileUtil.get(FileUtil.USERS);
+
+        if (current != null) {
+            setCurrentUser(current);
+            //Log user in
+            if (selected != null) {
+                //Go to meeting page
+                return new MeetingDetail(selected);
+            } else {
+                return new Startpage();
+                //Go to startpage
+            }
+        } else if (users != null && !users.isEmpty()) {
+            //Go to login page
+            return new Login();
+        } else {
+            //Go to register page
+            return new Register();
+        }
+    }
+
     private static void refresh() {
         FileUtil.read();
-        String username = mainframe.currentUser.getUsername();
-        for (User u : (List<User>) FileUtil.get(FileUtil.USERS)) {
-            if (u.getUsername().equals(username)) {
-                mainframe.currentUser = u;
+        if (mainframe.currentUser != null) {
+            if (FileUtil.get(FileUtil.USERS) != null) {
+                String username = mainframe.currentUser.getUsername();
+                for (User u : (List<User>) FileUtil.get(FileUtil.USERS)) {
+                    if (u.getUsername().equals(username)) {
+                        mainframe.currentUser = u;
+                    }
+                }
             }
         }
     }
@@ -114,6 +161,16 @@ public class Main extends javax.swing.JFrame {
     private void logout() {
         currentUser = null;
         setPanel(new Login());
+    }
+
+    private static ActionListener timerAction() {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                refresh();
+            }
+
+        };
     }
 
     /**
@@ -128,10 +185,10 @@ public class Main extends javax.swing.JFrame {
         pnlMain = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        btnNewMeeting = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
-        jMenuItem3 = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
+        btnLogout = new javax.swing.JMenuItem();
+        btnExit = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -149,28 +206,28 @@ public class Main extends javax.swing.JFrame {
 
         jMenu1.setText("File");
 
-        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem1.setText("Nieuwe afspraak");
-        jMenu1.add(jMenuItem1);
+        btnNewMeeting.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
+        btnNewMeeting.setText("Nieuwe afspraak");
+        jMenu1.add(btnNewMeeting);
         jMenu1.add(jSeparator1);
 
-        jMenuItem3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem3.setText("Uitloggen");
-        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+        btnLogout.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
+        btnLogout.setText("Uitloggen");
+        btnLogout.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem3ActionPerformed(evt);
+                btnLogoutActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem3);
+        jMenu1.add(btnLogout);
 
-        jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
-        jMenuItem2.setText("Afsluiten");
-        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+        btnExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
+        btnExit.setText("Afsluiten");
+        btnExit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem2ActionPerformed(evt);
+                btnExitActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem2);
+        jMenu1.add(btnExit);
 
         jMenuBar1.add(jMenu1);
 
@@ -193,19 +250,19 @@ public class Main extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+    private void btnExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExitActionPerformed
         int option = JOptionPane.showOptionDialog(null,
                 "Weet je zeker dat je wil afsluiten?", "Bevestig",
                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
                 new Object[]{"Ja", "Nee"}, "Nee");
-        if(option == JOptionPane.YES_OPTION){
+        if (option == JOptionPane.YES_OPTION) {
             System.exit(0);
         }
-    }//GEN-LAST:event_jMenuItem2ActionPerformed
+    }//GEN-LAST:event_btnExitActionPerformed
 
-    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+    private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
         logout();
-    }//GEN-LAST:event_jMenuItem3ActionPerformed
+    }//GEN-LAST:event_btnLogoutActionPerformed
 
     /**
      * @param args the command line arguments
@@ -243,12 +300,12 @@ public class Main extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem btnExit;
+    private javax.swing.JMenuItem btnLogout;
+    private javax.swing.JMenuItem btnNewMeeting;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPanel pnlMain;
     // End of variables declaration//GEN-END:variables

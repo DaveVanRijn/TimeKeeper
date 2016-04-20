@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Agenda;
+package Object;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -90,7 +90,7 @@ public class Meeting implements Serializable, Comparable<Meeting> {
     }
 
     public Date peekNotify() {
-        if(notifies.isEmpty()){
+        if (notifies.isEmpty()) {
             return null;
         }
         return notifies.get(0);
@@ -113,7 +113,36 @@ public class Meeting implements Serializable, Comparable<Meeting> {
         int minute = cal.get(Calendar.MINUTE);
         String hourString = (hour < 10) ? "0" + hour : Integer.toString(hour);
         String minuteString = (minute < 10) ? "0" + minute : Integer.toString(minute);
-        return hourString + ":" + minuteString + ":00";
+        return hourString + ":" + minuteString;
+    }
+
+    public String getMeetingTime() {
+        StringBuilder builder = new StringBuilder();
+        Calendar cal = Calendar.getInstance();
+
+        //Start time
+        cal.setTime(start);
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
+        int minute = cal.get(Calendar.MINUTE);
+        String hourString = (hour < 10) ? "0" + hour : Integer.toString(hour);
+        String minuteString = (minute < 10) ? "0" + minute : Integer.toString(minute);
+        builder.append(hourString);
+        builder.append(":");
+        builder.append(minuteString);
+
+        builder.append(" - ");
+
+        //End time
+        cal.setTime(end);
+        hour = cal.get(Calendar.HOUR_OF_DAY);
+        minute = cal.get(Calendar.MINUTE);
+        hourString = (hour < 10) ? "0" + hour : Integer.toString(hour);
+        minuteString = (minute < 10) ? "0" + minute : Integer.toString(minute);
+        builder.append(hourString);
+        builder.append(":");
+        builder.append(minuteString);
+
+        return builder.toString();
     }
 
     @Override

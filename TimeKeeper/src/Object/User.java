@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Agenda;
+package Object;
 
 import Exception.CharNotSupportedException;
+import Resource.Util;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,7 +28,7 @@ public class User implements Serializable {
 
     public User(String username, String password) throws CharNotSupportedException {
         this.username = username;
-        this.password = Main.encrypt(password);
+        this.password = Util.encrypt(password);
         agenda = new Agenda();
     }
 
@@ -44,11 +45,11 @@ public class User implements Serializable {
     }
 
     public String getDecryptedPassword() throws CharNotSupportedException {
-        return Main.decrypt(password);
+        return Util.decrypt(password);
     }
 
     public void setPassword(String password) throws CharNotSupportedException {
-        this.password = Main.encrypt(password);
+        this.password = Util.encrypt(password);
     }
 
     public String getFirstname() {

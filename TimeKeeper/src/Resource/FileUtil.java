@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package TimeKeeper;
+package Resource;
 
 import java.io.EOFException;
 import java.io.File;
@@ -24,7 +24,7 @@ import java.util.logging.Logger;
  */
 public class FileUtil {
 
-    public static final int COLOR = 0, LOGGED_USER = 1, USERS = 2;
+    public static final int COLOR = 0, LOGGED_USER = 1, USERS = 2, SELECTED_MEETING = 3;
     private static final String DIR = System.getProperty("user.home") + "\\TimeKeeper";
     private static final String FILE = DIR + "\\props.tk";
     private static final Map<Integer, Object> PROPS = new TreeMap<>();
@@ -120,8 +120,8 @@ public class FileUtil {
             file.createNewFile();
         }
     }
-    
-    private static void addPrivate(int title, Object object){
+
+    private static void addPrivate(int title, Object object) {
         PROPS.put(title, object);
     }
 }

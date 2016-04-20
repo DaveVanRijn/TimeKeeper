@@ -125,7 +125,7 @@ public class EncryptionKey {
      * supported
      */
     public String isSupported(String s) {
-        if(s.isEmpty()){
+        if (s.isEmpty()) {
             return null;
         }
         String[] array = s.split("");
