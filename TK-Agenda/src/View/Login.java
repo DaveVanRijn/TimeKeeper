@@ -10,7 +10,12 @@ import Main.Main;
 import Object.User;
 import Resource.EncryptionKey;
 import Resource.FileUtil;
+import java.awt.Font;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.font.TextAttribute;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,14 +25,36 @@ import java.util.logging.Logger;
  */
 public class Login extends javax.swing.JPanel {
 
+    private boolean registerPressed = false;
     /**
      * Creates new form Login
      */
     public Login() {
         initComponents();
+        //Underline register label to make it look like al link
+        Font font = lblRegister.getFont();
+        Map attributes = font.getAttributes();
+        attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+        lblRegister.setFont(font.deriveFont(attributes));
+        //MouseListener for register label
+        lblRegister.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mousePressed(MouseEvent e){
+                registerPressed = true;
+            }
+            
+            @Override
+            public void mouseReleased(MouseEvent e){
+                if(registerPressed){
+                    registerPressed = false;
+                    Main.setPanel(new Register());
+                }
+            }
+        });
         int xLogin = (getSize().width - lblLogin.getPreferredSize().width) / 2;
         int yLogin = lblLogin.getLocation().y;
         lblLogin.setLocation(xLogin, yLogin);
+        lblError.setVisible(false);
     }
 
     private void login(String username, String password) {
@@ -98,6 +125,7 @@ public class Login extends javax.swing.JPanel {
         lblLogin = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
         lblError = new javax.swing.JLabel();
+        lblRegister = new javax.swing.JLabel();
 
         lblUsername.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
         lblUsername.setText("Gebruikersnaam");
@@ -145,14 +173,24 @@ public class Login extends javax.swing.JPanel {
         lblError.setForeground(new java.awt.Color(255, 0, 0));
         lblError.setText("Ongeldige combinatie van gebruikersnaam en wachtwoord!");
 
+        lblRegister.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lblRegister.setForeground(new java.awt.Color(0, 153, 255));
+        lblRegister.setText("Nog geen account? Registreer nu!");
+        lblRegister.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jSeparator1)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap(152, Short.MAX_VALUE)
+                .addComponent(lblLogin)
+                .addContainerGap(152, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(lblRegister)
                     .addComponent(btnLogin)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -164,10 +202,6 @@ public class Login extends javax.swing.JPanel {
                             .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(lblError))
                 .addGap(55, 55, 55))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap(152, Short.MAX_VALUE)
-                .addComponent(lblLogin)
-                .addContainerGap(152, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -186,9 +220,11 @@ public class Login extends javax.swing.JPanel {
                     .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lblError)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblRegister)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnLogin)
-                .addGap(29, 29, 29))
+                .addComponent(btnLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -230,6 +266,7 @@ public class Login extends javax.swing.JPanel {
     private javax.swing.JLabel lblError;
     private javax.swing.JLabel lblLogin;
     private javax.swing.JLabel lblPassword;
+    private javax.swing.JLabel lblRegister;
     private javax.swing.JLabel lblUsername;
     private javax.swing.JPasswordField txtPassword;
     private javax.swing.JTextField txtUsername;

@@ -12,15 +12,20 @@ import Resource.EncryptionKey;
 import Resource.FileUtil;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.font.TextAttribute;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,6 +47,7 @@ import javax.swing.event.DocumentListener;
 public class Register extends javax.swing.JPanel {
 
     private final int PASS_ERROR = 0, CONFIRM_ERROR = 1, USERNAME_ERROR = 2;
+    private boolean loginPressed = false;
 
     /**
      * Creates new form Register
@@ -66,16 +72,16 @@ public class Register extends javax.swing.JPanel {
             user.setCountry(country);
             user.setHouseNumber(houseNumber);
             user.setBirthday(birthday);
-            
+
             List<User> users = (List<User>) FileUtil.get(FileUtil.USERS);
-            if(users == null){
+            if (users == null) {
                 users = new ArrayList<>();
             }
             users.add(user);
             FileUtil.add(FileUtil.USERS, users);
-            
+
             Main.setCurrentUser(user);
-            if(Main.getCurrentUser() != null){
+            if (Main.getCurrentUser() != null) {
                 Main.setPanel(new Startpage());
             }
         } catch (CharNotSupportedException ex) {
@@ -301,6 +307,7 @@ public class Register extends javax.swing.JPanel {
         lblConfirmPassError = new javax.swing.JLabel();
         lblUsernameError = new javax.swing.JLabel();
         lblPasswordError = new javax.swing.JLabel();
+        lblLogin = new javax.swing.JLabel();
         pnlPersoons = new javax.swing.JPanel();
         jSeparator1 = new javax.swing.JSeparator();
         lblFirstname = new javax.swing.JLabel();
@@ -395,6 +402,12 @@ public class Register extends javax.swing.JPanel {
         lblPasswordError.setForeground(new java.awt.Color(255, 0, 0));
         lblPasswordError.setText("Ongeldig wachtwoord.");
         pnlAlgemeen.add(lblPasswordError, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 100, -1, -1));
+
+        lblLogin.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lblLogin.setForeground(new java.awt.Color(0, 153, 255));
+        lblLogin.setText("Inloggen met een bestaand account");
+        lblLogin.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        pnlAlgemeen.add(lblLogin, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
 
         pnlPersoons.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
         pnlPersoons.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 944, 10));
@@ -542,7 +555,7 @@ public class Register extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(pnlAlgemeen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(pnlPersoons, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(pnlPersoons, javax.swing.GroupLayout.DEFAULT_SIZE, 315, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -742,6 +755,31 @@ public class Register extends javax.swing.JPanel {
             }
 
         });
+
+        //Underline login label and add mouselistener
+        Font font = lblLogin.getFont();
+        Map attributes = font.getAttributes();
+        attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+        lblLogin.setFont(font.deriveFont(attributes));
+
+        lblLogin.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (lblLogin.isEnabled()) {
+                    loginPressed = true;
+                }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (lblLogin.isEnabled()) {
+                    if (loginPressed) {
+                        loginPressed = false;
+                        Main.setPanel(new Login());
+                    }
+                }
+            }
+        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -763,6 +801,7 @@ public class Register extends javax.swing.JPanel {
     private javax.swing.JLabel lblHouseNumber;
     private javax.swing.JLabel lblInfix;
     private javax.swing.JLabel lblLastname;
+    private javax.swing.JLabel lblLogin;
     private javax.swing.JLabel lblPassword;
     private javax.swing.JLabel lblPasswordError;
     private javax.swing.JLabel lblPersoonsTitle;
