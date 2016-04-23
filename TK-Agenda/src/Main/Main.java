@@ -20,11 +20,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -132,6 +132,11 @@ public class Main extends javax.swing.JFrame {
     public static void setCurrentUser(User user) {
         mainframe.currentUser = user;
     }
+    
+    public static boolean checkEmail(String email){
+        Pattern p = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+        return p.matcher(email).matches();
+    }
 
     public static String encrypt(String text) throws CharNotSupportedException {
         return new EncryptionKey().encrypt(text);
@@ -207,6 +212,7 @@ public class Main extends javax.swing.JFrame {
         menu = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         btnNewMeeting = new javax.swing.JMenuItem();
+        jMenuItem1 = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         btnLogout = new javax.swing.JMenuItem();
         btnExit = new javax.swing.JMenuItem();
@@ -230,6 +236,10 @@ public class Main extends javax.swing.JFrame {
         btnNewMeeting.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
         btnNewMeeting.setText("Nieuwe afspraak");
         jMenu1.add(btnNewMeeting);
+
+        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_BACK_SPACE, 0));
+        jMenuItem1.setText("Vorige");
+        jMenu1.add(jMenuItem1);
         jMenu1.add(jSeparator1);
 
         btnLogout.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
@@ -326,6 +336,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JMenuItem btnNewMeeting;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JMenuBar menu;
     private javax.swing.JPanel pnlMain;

@@ -142,12 +142,11 @@ public class User implements Serializable {
     }
 
     public boolean setEmail(String email) {
-        Pattern p = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
-        boolean match = p.matcher(email).matches();
-        if(match){
+        if(Main.checkEmail(email)){
             this.email = email;
+            return true;
         }
-        return match;
+        return false;
     }
 
     public void addMeeting(Meeting m) {

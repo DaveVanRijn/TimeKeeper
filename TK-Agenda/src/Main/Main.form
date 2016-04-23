@@ -17,6 +17,14 @@
                 <Property name="text" type="java.lang.String" value="Nieuwe afspraak"/>
               </Properties>
             </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jMenuItem1">
+              <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="BACK_SPACE"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Vorige"/>
+              </Properties>
+            </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator1">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="btnLogout">
