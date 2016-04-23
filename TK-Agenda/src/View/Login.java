@@ -13,7 +13,6 @@ import Resource.FileUtil;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -26,6 +25,9 @@ public class Login extends javax.swing.JPanel {
      */
     public Login() {
         initComponents();
+        int xLogin = (getSize().width - lblLogin.getPreferredSize().width) / 2;
+        int yLogin = lblLogin.getLocation().y;
+        lblLogin.setLocation(xLogin, yLogin);
     }
 
     private void login(String username, String password) {
@@ -55,17 +57,28 @@ public class Login extends javax.swing.JPanel {
     private void falseLogin(String source, String pass) {
         switch (source) {
             case "Combi":
-                JOptionPane.showMessageDialog(null, "Ongeldige combinatie van"
-                        + " gebruikersnaam en wachtwoord.", "Fout",
-                        JOptionPane.ERROR_MESSAGE);
+                lblError.setText("Ongeldige combinatie van gebruikersnaam en wachtwoord!");
+                txtUsername.setText("");
+                txtPassword.setText("");
                 break;
             case "Pass":
                 String notSupported = new EncryptionKey().isSupported(pass);
-                JOptionPane.showMessageDialog(null, "'" + notSupported
-                        + "' kan niet in het wachtwoord gebruikt worden.",
-                        "Fout", JOptionPane.ERROR_MESSAGE);
+                lblError.setText("Ongeldig teken: '" + notSupported + "'!");
+                txtPassword.setText("");
+                break;
+            case "EmptyUser":
+                lblError.setText("Vul een gebruikersnaam in!");
+                break;
+            case "EmptyPass":
+                lblError.setText("Vul een wachtwoord in!");
                 break;
         }
+
+        int x = (getWidth() - lblError.getPreferredSize().width) / 2 - 55;
+        int y = lblError.getLocation().y;
+        lblError.setLocation(x, y);
+        lblError.setVisible(true);
+
     }
 
     /**
@@ -77,19 +90,148 @@ public class Login extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        lblUsername = new javax.swing.JLabel();
+        lblPassword = new javax.swing.JLabel();
+        txtUsername = new javax.swing.JTextField();
+        txtPassword = new javax.swing.JPasswordField();
+        btnLogin = new javax.swing.JButton();
+        lblLogin = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
+        lblError = new javax.swing.JLabel();
+
+        lblUsername.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
+        lblUsername.setText("Gebruikersnaam");
+
+        lblPassword.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
+        lblPassword.setText("Wachtwoord");
+
+        txtUsername.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
+        txtUsername.setNextFocusableComponent(txtPassword);
+        txtUsername.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtUsernameFocusGained(evt);
+            }
+        });
+        txtUsername.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtUsernameActionPerformed(evt);
+            }
+        });
+
+        txtPassword.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
+        txtPassword.setNextFocusableComponent(txtUsername);
+        txtPassword.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtPasswordFocusGained(evt);
+            }
+        });
+        txtPassword.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtPasswordActionPerformed(evt);
+            }
+        });
+
+        btnLogin.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
+        btnLogin.setText("Inloggen");
+        btnLogin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLoginActionPerformed(evt);
+            }
+        });
+
+        lblLogin.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        lblLogin.setText("Inloggen");
+
+        lblError.setForeground(new java.awt.Color(255, 0, 0));
+        lblError.setText("Ongeldige combinatie van gebruikersnaam en wachtwoord!");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addComponent(jSeparator1)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnLogin)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblUsername)
+                            .addComponent(lblPassword))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtUsername)
+                            .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(lblError))
+                .addGap(55, 55, 55))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap(152, Short.MAX_VALUE)
+                .addComponent(lblLogin)
+                .addContainerGap(152, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblLogin)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(31, 31, 31)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblUsername)
+                    .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(24, 24, 24)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblPassword)
+                    .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lblError)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnLogin)
+                .addGap(29, 29, 29))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
+        String username = txtUsername.getText();
+        char[] pass = txtPassword.getPassword();
+
+        if (!username.isEmpty()) {
+            if (pass.length > 0) {
+                login(username, String.copyValueOf(pass));
+            } else {
+                falseLogin("EmptyPass", null);
+            }
+        } else {
+            falseLogin("EmptyUser", null);
+        }
+    }//GEN-LAST:event_btnLoginActionPerformed
+
+    private void txtUsernameFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtUsernameFocusGained
+        lblError.setVisible(false);
+    }//GEN-LAST:event_txtUsernameFocusGained
+
+    private void txtPasswordFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPasswordFocusGained
+        lblError.setVisible(false);
+    }//GEN-LAST:event_txtPasswordFocusGained
+
+    private void txtUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsernameActionPerformed
+        btnLogin.doClick();
+    }//GEN-LAST:event_txtUsernameActionPerformed
+
+    private void txtPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPasswordActionPerformed
+        btnLogin.doClick();
+    }//GEN-LAST:event_txtPasswordActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnLogin;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JLabel lblError;
+    private javax.swing.JLabel lblLogin;
+    private javax.swing.JLabel lblPassword;
+    private javax.swing.JLabel lblUsername;
+    private javax.swing.JPasswordField txtPassword;
+    private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
 }

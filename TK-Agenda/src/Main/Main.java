@@ -20,6 +20,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 import java.util.logging.Level;
@@ -56,8 +57,21 @@ public class Main extends javax.swing.JFrame {
         pnlMain.setLayout(new BorderLayout());
 
         FileUtil.read();
+//        try {
+//            User test = new User("Dave", "Hoi");
+//            ArrayList<User> users = new ArrayList<>();
+//            users.add(test);
+//            FileUtil.add(FileUtil.USERS, users);
+//        } catch (CharNotSupportedException ex) {
+//            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+//        }
 
         JPanel panel = getStartPanel();
+        if (panel instanceof Login) {
+            menu.setVisible(false);
+        } else {
+            menu.setVisible(true);
+        }
 
         pnlMain.add(panel, BorderLayout.CENTER);
 
@@ -88,6 +102,13 @@ public class Main extends javax.swing.JFrame {
     public static void setPanel(Object o) {
         refresh();
         JPanel panel = (JPanel) o;
+
+        if (panel instanceof Login) {
+            mainframe.menu.setVisible(false);
+        } else {
+            mainframe.menu.setVisible(true);
+        }
+
         mainframe.panels.push(panel);
 
         mainframe.pnlMain.removeAll();
@@ -183,7 +204,7 @@ public class Main extends javax.swing.JFrame {
     private void initComponents() {
 
         pnlMain = new javax.swing.JPanel();
-        jMenuBar1 = new javax.swing.JMenuBar();
+        menu = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         btnNewMeeting = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
@@ -229,12 +250,12 @@ public class Main extends javax.swing.JFrame {
         });
         jMenu1.add(btnExit);
 
-        jMenuBar1.add(jMenu1);
+        menu.add(jMenu1);
 
         jMenu2.setText("Edit");
-        jMenuBar1.add(jMenu2);
+        menu.add(jMenu2);
 
-        setJMenuBar(jMenuBar1);
+        setJMenuBar(menu);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -305,8 +326,8 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JMenuItem btnNewMeeting;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JMenuBar menu;
     private javax.swing.JPanel pnlMain;
     // End of variables declaration//GEN-END:variables
 }

@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -21,7 +22,7 @@ public class User implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String username, password, firstname, infix, lastname, address,
-            addressExtra, city, country, postalCode;
+            addressExtra, city, country, postalCode, email;
     private int houseNumber;
     private Date birthday;
     private final Agenda agenda;
@@ -134,6 +135,19 @@ public class User implements Serializable {
 
     public void setPostalCode(String postalCode) {
         this.postalCode = postalCode;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public boolean setEmail(String email) {
+        Pattern p = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+        boolean match = p.matcher(email).matches();
+        if(match){
+            this.email = email;
+        }
+        return match;
     }
 
     public void addMeeting(Meeting m) {
