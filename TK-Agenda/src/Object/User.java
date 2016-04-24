@@ -7,6 +7,7 @@ package Object;
 
 import Exception.CharNotSupportedException;
 import Main.Main;
+import Resource.Util;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;

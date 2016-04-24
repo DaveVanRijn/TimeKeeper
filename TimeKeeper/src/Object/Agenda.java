@@ -49,9 +49,9 @@ public class Agenda implements Serializable {
         checkNotifications();
     }
 
-    private void checkMeetings() {
+    public List<Meeting> getTodayMeetings() {
+        List<Meeting> meets = new ArrayList<>();
         try {
-            List<Meeting> meets = new ArrayList<>();
             Calendar cal = Calendar.getInstance();
             Date today = Util.getDate(cal);
 
@@ -63,16 +63,24 @@ public class Agenda implements Serializable {
                         meets.add(m);
                     }
                 }
-                if (meets.size() > 1) {
-                    Keeper.showMessage("Je heb meerdere afspraken vandaag. "
-                            + "Open TimeKeeper voor details.", TrayIcon.MessageType.INFO);
-                } else if (meets.size() == 1) {
-                    String time = meets.get(0).getTime();
-                    Keeper.showMessage(meets.get(0).getTitle() + " om " + time.substring(0, time.length() - 3) + ".", TrayIcon.MessageType.INFO);
-                }
             }
         } catch (ParseException ex) {
             Logger.getLogger(Agenda.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return meets;
+    }
+
+    private void checkMeetings() {
+        List<Meeting> meets = getTodayMeetings();
+
+        if (!meetings.isEmpty()) {
+            if (meets.size() > 1) {
+                Keeper.showMessage("Je heb meerdere afspraken vandaag. "
+                        + "Open TimeKeeper voor details.", TrayIcon.MessageType.INFO);
+            } else if (meets.size() == 1) {
+                String time = meets.get(0).getTime();
+                Keeper.showMessage(meets.get(0).getTitle() + " om " + time.substring(0, time.length() - 3) + ".", TrayIcon.MessageType.INFO);
+            }
         }
     }
 
@@ -87,7 +95,7 @@ public class Agenda implements Serializable {
                 for (Meeting m : list) {
                     Date notification = m.peekNotify();
                     if (notification != null && Util.getDateString(notification).equals(Util.getDateString(date))) {
-                        m.getNotify();
+                        m.removeNotify();
                         notifies.add(m);
                     }
                 }

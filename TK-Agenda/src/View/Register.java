@@ -60,8 +60,15 @@ public class Register extends javax.swing.JPanel {
 
     private void register(String username, String password, String firstname,
             String infix, String lastname, String address, String addressExtra,
-            String city, String country, int houseNumber, Date birthday) {
+            String city, String country, String houseNumber, Date birthday) {
         try {
+            int house;
+            if(houseNumber.isEmpty()){
+                house = -1;
+            } else {
+                house = Integer.parseInt(houseNumber);
+            }
+            
             User user = new User(username, password);
             user.setFirstname(firstname);
             user.setInfix(infix);
@@ -70,7 +77,7 @@ public class Register extends javax.swing.JPanel {
             user.setAddressExtra(addressExtra);
             user.setCity(city);
             user.setCountry(country);
-            user.setHouseNumber(houseNumber);
+            user.setHouseNumber(house);
             user.setBirthday(birthday);
 
             List<User> users = (List<User>) FileUtil.get(FileUtil.USERS);
@@ -593,7 +600,7 @@ public class Register extends javax.swing.JPanel {
             register(txtUsername.getText(),
                     String.copyValueOf(txtPassword.getPassword()),
                     firstname, infix, lastname, street, extra, city, country,
-                    Integer.parseInt(house), birthday);
+                    house, birthday);
         } else {
             JOptionPane.showMessageDialog(null, "Enkele velden zijn onjuist "
                     + "ingevoerd, deze hebben een rode kleur.", "Fout",

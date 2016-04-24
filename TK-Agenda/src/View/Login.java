@@ -67,6 +67,7 @@ public class Login extends javax.swing.JPanel {
                         Main.setCurrentUser(u);
                         if (Main.getCurrentUser() != null) {
                             Main.setPanel(new Startpage());
+                            FileUtil.add(FileUtil.LOGGED_USER, u);
                             return;
                         }
                     }

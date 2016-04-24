@@ -6,8 +6,11 @@
 package Object;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -19,18 +22,18 @@ public class Meeting implements Serializable, Comparable<Meeting> {
 
     private final int id;
     private String title, description, location;
-    private Date start, end, notify;
-    private boolean notified;
+    private Date start, end;
+    private final List<Date> notifies;
 
     public Meeting(int id, String title, String description, String location,
-            Date start, Date end, Date notify) {
+            Date start, Date end) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.location = location;
         this.start = start;
         this.end = end;
-        this.notify = notify;
+        this.notifies = new ArrayList<>();
     }
 
     public int getId() {
@@ -77,20 +80,24 @@ public class Meeting implements Serializable, Comparable<Meeting> {
         this.end = end;
     }
 
+    public List<Date> getNotifies() {
+        return notifies;
+    }
+
+    public void addNotify(Date notify) {
+        notifies.add(notify);
+        Collections.sort(notifies);
+    }
+
+    public Date peekNotify() {
+        if (notifies.isEmpty()) {
+            return null;
+        }
+        return notifies.get(0);
+    }
+
     public Date getNotify() {
-        return notify;
-    }
-
-    public void setNotify(Date notify) {
-        this.notify = notify;
-    }
-
-    public boolean isNotified() {
-        return notified;
-    }
-
-    public void setNotified(boolean notified) {
-        this.notified = notified;
+        return notifies.remove(0);
     }
 
     public int getYear() {
@@ -106,12 +113,40 @@ public class Meeting implements Serializable, Comparable<Meeting> {
         int minute = cal.get(Calendar.MINUTE);
         String hourString = (hour < 10) ? "0" + hour : Integer.toString(hour);
         String minuteString = (minute < 10) ? "0" + minute : Integer.toString(minute);
-        return hourString + ":" + minuteString + ":00";
+        return hourString + ":" + minuteString;
+    }
+
+    public String getMeetingTime() {
+        StringBuilder builder = new StringBuilder();
+        Calendar cal = Calendar.getInstance();
+
+        //Start time
+        cal.setTime(start);
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
+        int minute = cal.get(Calendar.MINUTE);
+        String hourString = (hour < 10) ? "0" + hour : Integer.toString(hour);
+        String minuteString = (minute < 10) ? "0" + minute : Integer.toString(minute);
+        builder.append(hourString);
+        builder.append(":");
+        builder.append(minuteString);
+
+        builder.append(" - ");
+
+        //End time
+        cal.setTime(end);
+        hour = cal.get(Calendar.HOUR_OF_DAY);
+        minute = cal.get(Calendar.MINUTE);
+        hourString = (hour < 10) ? "0" + hour : Integer.toString(hour);
+        minuteString = (minute < 10) ? "0" + minute : Integer.toString(minute);
+        builder.append(hourString);
+        builder.append(":");
+        builder.append(minuteString);
+
+        return builder.toString();
     }
 
     @Override
     public int compareTo(Meeting o) {
         return start.compareTo(o.getStart());
     }
-
 }

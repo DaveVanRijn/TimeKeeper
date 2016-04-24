@@ -5,6 +5,17 @@
  */
 package View;
 
+import Main.Main;
+import Object.Meeting;
+import Object.MeetingPanel;
+import Object.User;
+import java.awt.Dimension;
+import java.util.List;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import org.netbeans.lib.awtextra.AbsoluteConstraints;
+import org.netbeans.lib.awtextra.AbsoluteLayout;
+
 /**
  *
  * @author Dave van Rijn, Student 500714558, Klas IS202
@@ -16,6 +27,7 @@ public class Startpage extends javax.swing.JPanel {
      */
     public Startpage() {
         initComponents();
+        initMyComponents();
     }
 
     /**
@@ -27,44 +39,37 @@ public class Startpage extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tblMeetings = new javax.swing.JTable();
-
-        tblMeetings.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
-        tblMeetings.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        tblMeetings.setRowHeight(30);
-        jScrollPane1.setViewportView(tblMeetings);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(464, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 205, Short.MAX_VALUE))
-        );
+        setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
     }// </editor-fold>//GEN-END:initComponents
 
+    private void initMyComponents() {
+        setPreferredSize(new Dimension(944, 530));
+        JPanel pnlMeetings = new JPanel();
+        pnlMeetings.setLayout(new AbsoluteLayout());
+        User current = Main.getCurrentUser();
+        List<Meeting> todayMeetings = current.getAgenda().getTodayMeetings();
+        int x = 0;
+        int y = 0;
+        int width = 520;
+        int height = 48;
+        int panelHeight = height * todayMeetings.size();
+
+        pnlMeetings.add(new MeetingPanel(null), new AbsoluteConstraints(x, y, width, height));
+        y += height;
+        for (Meeting m : todayMeetings) {
+            pnlMeetings.add(new MeetingPanel(m), new AbsoluteConstraints(x, y, width, height));
+            y += height;
+        }
+        JScrollPane scrollPane = new JScrollPane(pnlMeetings);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(30);
+        int scrollHeight = 530;
+        int scrollX = getPreferredSize().width - width;
+
+        add(scrollPane, new AbsoluteConstraints(scrollX, 0, width, scrollHeight));
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable tblMeetings;
     // End of variables declaration//GEN-END:variables
 }

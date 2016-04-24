@@ -194,21 +194,23 @@ public class Keeper extends javax.swing.JDialog {
             lblMinute.setText(text);
             if (currentUser != null) {
                 currentUser.getAgenda().checkNotifications();
+                
             }
         }
         int sec = cal.get(Calendar.SECOND);
         boolean between = sec != 0 && sec != 15 && sec != 30 && sec != 45;
-        if((sec == 0 || sec == 15 || sec == 30 || sec == 45) && syncing){
+        if ((sec == 0 || sec == 15 || sec == 30 || sec == 45) && syncing) {
             refresh();
             syncing = false;
-        } else if (between){
+        } else if (between) {
             syncing = true;
         }
     }
 
     private void refresh() {
         FileUtil.read();
-        if (currentUser != null) {
+        User logged = (User) FileUtil.get(FileUtil.LOGGED_USER);
+        if (currentUser != null && logged != null) {
             if (FileUtil.get(FileUtil.USERS) != null) {
                 String username = currentUser.getUsername();
                 for (User u : (List<User>) FileUtil.get(FileUtil.USERS)) {
@@ -218,8 +220,11 @@ public class Keeper extends javax.swing.JDialog {
                     }
                 }
             }
-            setMeetingPanel();
+        } else {
+            User u = (User) FileUtil.get(FileUtil.LOGGED_USER);
+            setCurrentUser(u);
         }
+        setMeetingPanel();
     }
 
     private void checkUser() {

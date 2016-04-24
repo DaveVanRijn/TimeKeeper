@@ -96,8 +96,8 @@ public class Meeting implements Serializable, Comparable<Meeting> {
         return notifies.get(0);
     }
 
-    public Date getNotify() {
-        return notifies.remove(0);
+    public void removeNotify() {
+        notifies.remove(0);
     }
 
     public int getYear() {

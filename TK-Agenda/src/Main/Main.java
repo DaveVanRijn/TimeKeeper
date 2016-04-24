@@ -7,6 +7,7 @@ package Main;
 
 import Exception.CharNotSupportedException;
 import Object.Meeting;
+import Object.PanelList;
 import Object.User;
 import Resource.EncryptionKey;
 import Resource.FileUtil;
@@ -20,8 +21,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
-import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -38,33 +40,62 @@ import javax.swing.WindowConstants;
 public class Main extends javax.swing.JFrame {
 
     private static Main mainframe;
-    private final Stack<JPanel> panels;
     private User currentUser;
+    private PanelList panels;
 
     /**
      * Creates new form Main
      */
     public Main() {
         initComponents();
+        //Init PanelList
+        panels = new PanelList();
         try {
             setIconImage(ImageIO.read(getClass().getResource("/Resource/agendaIcon.png")));
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
         setTitle("TimeKeeper - Agenda");
-        panels = new Stack<>();
 
         pnlMain.setLayout(new BorderLayout());
 
         FileUtil.read();
-//        try {
-//            User test = new User("Dave", "Hoi");
-//            ArrayList<User> users = new ArrayList<>();
-//            users.add(test);
-//            FileUtil.add(FileUtil.USERS, users);
-//        } catch (CharNotSupportedException ex) {
-//            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+        try {
+            Calendar now = Calendar.getInstance();
+            Calendar now2 = Calendar.getInstance();
+            User test = new User("Dave", "Hoi");
+            now2.set(Calendar.MINUTE, now.get(Calendar.MINUTE) + 1);
+            Meeting m1 = new Meeting(test.nextMeetingId(), "Test 1 met een heel lange titel dus zal wel afgekort moeten worden",
+                    "First test meeting", "Home", now.getTime(),
+                    now2.getTime());
+
+            Meeting m2 = new Meeting(test.nextMeetingId(), "Test 2",
+                    "Second test meeting", "School", now.getTime(), now2.getTime());
+
+            now2.set(Calendar.MINUTE, now.get(Calendar.MINUTE) + 2);
+            Meeting m4 = new Meeting(test.nextMeetingId(), "Test 4",
+                    "Fourth test meeting", "Thuis", now.getTime(), now2.getTime());
+
+            Meeting m5 = new Meeting(test.nextMeetingId(), "Test 5",
+                    "Fifth test meeting", "Beneden", now.getTime(), now2.getTime());
+
+            Calendar noti = (Calendar) now.clone();
+            now.set(Calendar.DAY_OF_MONTH, now.get(Calendar.DAY_OF_MONTH) + 1);
+            Meeting m3 = new Meeting(test.nextMeetingId(), "Test 3",
+                    "Third test meeting", "Somewhere", now.getTime(), now.getTime());
+            m3.addNotify(noti.getTime());
+            test.addMeeting(m1);
+            test.addMeeting(m2);
+            test.addMeeting(m3);
+            test.addMeeting(m4);
+            test.addMeeting(m5);
+            ArrayList<User> users = new ArrayList<>();
+            users.add(test);
+
+            FileUtil.add(FileUtil.USERS, users);
+        } catch (CharNotSupportedException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         JPanel panel = getStartPanel();
         if (panel instanceof Login) {
@@ -72,7 +103,14 @@ public class Main extends javax.swing.JFrame {
         } else {
             menu.setVisible(true);
         }
-
+        if (!(panel instanceof Login || panel instanceof Register)) {
+            panels.add(panel);
+            btnBack.setVisible(panels.hasPrev());
+            btnNext.setVisible(panels.hasNext());
+        } else {
+            btnBack.setVisible(panels.hasPrev());
+            btnNext.setVisible(panels.hasNext());
+        }
         pnlMain.add(panel, BorderLayout.CENTER);
 
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -109,20 +147,18 @@ public class Main extends javax.swing.JFrame {
             mainframe.menu.setVisible(true);
         }
 
-        mainframe.panels.push(panel);
-
         mainframe.pnlMain.removeAll();
         mainframe.pnlMain.add(panel, BorderLayout.CENTER);
 
+        boolean loginOrRegister = panel instanceof Login || panel instanceof Register;
+        if (!loginOrRegister) {
+            mainframe.panels.add(panel);
+        }
+        mainframe.btnBack.setVisible(mainframe.panels.hasPrev() && !loginOrRegister);
+        mainframe.btnNext.setVisible(mainframe.panels.hasNext() && !loginOrRegister);
+
         mainframe.pack();
         mainframe.setLocationRelativeTo(null);
-    }
-
-    private static void prevPanel() {
-        //Remove showing panel
-        mainframe.panels.pop();
-        //Show and remove previous panel
-        setPanel(mainframe.panels.pop());
     }
 
     public static User getCurrentUser() {
@@ -132,8 +168,8 @@ public class Main extends javax.swing.JFrame {
     public static void setCurrentUser(User user) {
         mainframe.currentUser = user;
     }
-    
-    public static boolean checkEmail(String email){
+
+    public static boolean checkEmail(String email) {
         Pattern p = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
         return p.matcher(email).matches();
     }
@@ -186,6 +222,7 @@ public class Main extends javax.swing.JFrame {
 
     private void logout() {
         currentUser = null;
+        FileUtil.remove(FileUtil.LOGGED_USER);
         setPanel(new Login());
     }
 
@@ -209,10 +246,11 @@ public class Main extends javax.swing.JFrame {
     private void initComponents() {
 
         pnlMain = new javax.swing.JPanel();
+        btnBack = new javax.swing.JButton();
+        btnNext = new javax.swing.JButton();
         menu = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         btnNewMeeting = new javax.swing.JMenuItem();
-        jMenuItem1 = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         btnLogout = new javax.swing.JMenuItem();
         btnExit = new javax.swing.JMenuItem();
@@ -228,21 +266,36 @@ public class Main extends javax.swing.JFrame {
         );
         pnlMainLayout.setVerticalGroup(
             pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 279, Short.MAX_VALUE)
+            .addGap(0, 249, Short.MAX_VALUE)
         );
 
+        btnBack.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
+        btnBack.setText("Vorige");
+        btnBack.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBackActionPerformed(evt);
+            }
+        });
+
+        btnNext.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
+        btnNext.setText("Volgende");
+        btnNext.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNextActionPerformed(evt);
+            }
+        });
+
         jMenu1.setText("File");
+        jMenu1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
         btnNewMeeting.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
+        btnNewMeeting.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnNewMeeting.setText("Nieuwe afspraak");
         jMenu1.add(btnNewMeeting);
-
-        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_BACK_SPACE, 0));
-        jMenuItem1.setText("Vorige");
-        jMenu1.add(jMenuItem1);
         jMenu1.add(jSeparator1);
 
         btnLogout.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
+        btnLogout.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnLogout.setText("Uitloggen");
         btnLogout.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -252,6 +305,7 @@ public class Main extends javax.swing.JFrame {
         jMenu1.add(btnLogout);
 
         btnExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
+        btnExit.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnExit.setText("Afsluiten");
         btnExit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -263,6 +317,7 @@ public class Main extends javax.swing.JFrame {
         menu.add(jMenu1);
 
         jMenu2.setText("Edit");
+        jMenu2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         menu.add(jMenu2);
 
         setJMenuBar(menu);
@@ -272,10 +327,19 @@ public class Main extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(pnlMain, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(btnBack)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnNext))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pnlMain, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnBack)
+                    .addComponent(btnNext))
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(pnlMain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -294,6 +358,14 @@ public class Main extends javax.swing.JFrame {
     private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
         logout();
     }//GEN-LAST:event_btnLogoutActionPerformed
+
+    private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
+        setPanel(mainframe.panels.prev());
+    }//GEN-LAST:event_btnBackActionPerformed
+
+    private void btnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextActionPerformed
+        setPanel(mainframe.panels.next());
+    }//GEN-LAST:event_btnNextActionPerformed
 
     /**
      * @param args the command line arguments
@@ -331,12 +403,13 @@ public class Main extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBack;
     private javax.swing.JMenuItem btnExit;
     private javax.swing.JMenuItem btnLogout;
     private javax.swing.JMenuItem btnNewMeeting;
+    private javax.swing.JButton btnNext;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JMenuBar menu;
     private javax.swing.JPanel pnlMain;
