@@ -61,6 +61,8 @@ public class TrayManager {
     }
 
     private static void init() throws AWTException {
+        final Font bold = new Font("Tahoma", Font.BOLD, 12),
+                plain = new Font("Tahoma", Font.PLAIN, 12);
         tray = SystemTray.getSystemTray();
         image = new ImageIcon(TrayManager.class.getResource("/Resource/clock.png")).getImage();
         popup = new PopupMenu();
@@ -102,16 +104,16 @@ public class TrayManager {
         hide.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                hide.setEnabled(false);
-                show.setEnabled(true);
+                hide.setFont(bold);
+                show.setFont(plain);
                 Keeper.showTime(false);
             }
         });
         show.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                show.setEnabled(false);
-                hide.setEnabled(true);
+                show.setFont(bold);
+                hide.setFont(plain);
                 Keeper.showTime(true);
             }
         });
@@ -128,16 +130,16 @@ public class TrayManager {
         blinkOn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                blinkOn.setEnabled(false);
-                blinkOff.setEnabled(true);
+                blinkOn.setFont(bold);
+                blinkOff.setFont(plain);
                 Keeper.setBlink(true);
             }
         });
         blinkOff.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                blinkOff.setEnabled(false);
-                blinkOn.setEnabled(true);
+                blinkOff.setFont(bold);
+                blinkOn.setFont(plain);
                 Keeper.setBlink(false);
             }
         });
@@ -164,16 +166,29 @@ public class TrayManager {
         popup.addSeparator();
         popup.add(color);
         popup.add(blink);
+        popup.addSeparator();
         popup.add(show);
         popup.add(hide);
         popup.addSeparator();
         popup.add(exit);
 
-        open.setFont(new Font("Tahoma", Font.BOLD, 12));
+        open.setFont(bold);
 
         //Enablings
-        show.setEnabled(false);
-        blinkOn.setEnabled(false);
+        show.setFont(bold);
+        blinkOn.setFont(bold);
+        Color current = (Color) FileUtil.get(FileUtil.COLOR);
+        if(current.getRGB() == ORANGE.getRGB()){
+            orange.setFont(bold);
+        } else if (current.getRGB() == BLUE.getRGB()){
+            blue.setFont(bold);
+        } else if (current.getRGB() == Color.WHITE.getRGB()){
+            white.setFont(bold);
+        } else if (current.getRGB() == Color.BLACK.getRGB()){
+            black.setFont(bold);
+        } else {
+            otherColor.setFont(bold);
+        }
 
         //Make icon
         icon = new TrayIcon(image, CAPTION, popup);
@@ -201,16 +216,16 @@ public class TrayManager {
     }
 
     private static void setColorLabels(Menu menu, MenuItem item) {
+        final Font bold = new Font("Tahoma", Font.BOLD, 12);
+        final Font plain = new Font("Tahoma", Font.PLAIN, 12);
         int menuItems = menu.getItemCount();
         for (int i = 0; i < menuItems; i++) {
             MenuItem m = menu.getItem(i);
-            String prefix;
             if (m == item) {
-                prefix = "* ";
+                m.setFont(bold);
             } else {
-                prefix = "  ";
+                m.setFont(plain);
             }
-            m.setLabel(prefix + m.getLabel().substring(2));
         }
     }
 }
