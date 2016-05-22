@@ -1,0 +1,6 @@
+-Datafile to Google Drive, option to select and change the location of the datafile.
+If the location of the datafile is changed, copy the original file to the new location.
+
+-Add buttons to add a new meeting or homework
+-Add homework (extends meeting)
+-Check syncing, replace all object classes by a new library containing all shared classes.
