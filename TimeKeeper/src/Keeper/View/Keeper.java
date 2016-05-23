@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ public class Keeper extends javax.swing.JDialog {
     private static boolean blinkOption = true, syncing;
     private static TrayManager trayManager;
     private static User currentUser;
+    private static Keeper keeper;
 
     /**
      * Creates new form Keeper
@@ -60,7 +62,11 @@ public class Keeper extends javax.swing.JDialog {
         getRootPane().setOpaque(false);
         getContentPane().setBackground(new Color(0, 0, 0, 0));
         setBackground(new Color(0, 0, 0, 0));
-        FileUtil.read();
+        try {
+            FileUtil.init(true);
+        } catch (IOException ex) {
+            Logger.getLogger(Keeper.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         //Components
         initComponents();
@@ -110,7 +116,6 @@ public class Keeper extends javax.swing.JDialog {
 
             @Override
             public void mouseExited(MouseEvent e) {
-                System.out.println("hide");
                 hideDetails();
             }
         });
@@ -128,6 +133,7 @@ public class Keeper extends javax.swing.JDialog {
     public static void setCurrentUser(User user) {
         currentUser = user;
         currentUser.checkAgenda();
+        FileUtil.add(FileUtil.LOGGED_USER, currentUser);
     }
 
     public static void changeColor(Color color, Container container) {
@@ -201,26 +207,31 @@ public class Keeper extends javax.swing.JDialog {
         }
     }
 
-    private void refresh() {
-        FileUtil.read();
-        User logged = (User) FileUtil.get(FileUtil.LOGGED_USER);
-        if (logged != null) {
-            if (currentUser != null) {
-                if (FileUtil.get(FileUtil.USERS) != null) {
-                    String username = currentUser.getUsername();
-                    for (User u : (List<User>) FileUtil.get(FileUtil.USERS)) {
-                        if (u.getUsername().equals(username)) {
-                            currentUser = u;
-                            break;
+    public static void refresh() {
+        try {
+            FileUtil.init(true);
+            User logged = (User) FileUtil.get(FileUtil.LOGGED_USER);
+            if (logged != null) {
+                if (currentUser != null) {
+                    if (FileUtil.get(FileUtil.USERS) != null) {
+                        String username = currentUser.getUsername();
+                        for (User u : (List<User>) FileUtil.get(FileUtil.USERS)) {
+                            if (u.getUsername().equals(username)) {
+                                currentUser = u;
+                                break;
+                            }
                         }
                     }
+                } else {
+                    setCurrentUser(logged);
                 }
             } else {
-                User u = (User) FileUtil.get(FileUtil.LOGGED_USER);
-                setCurrentUser(u);
+                currentUser = null;
             }
+            keeper.setMeetingPanel();
+        } catch (IOException ex) {
+            Logger.getLogger(Keeper.class.getName()).log(Level.SEVERE, null, ex);
         }
-        setMeetingPanel();
     }
 
     private void checkUser() {
@@ -383,7 +394,6 @@ public class Keeper extends javax.swing.JDialog {
 
     private void test() {
         try {
-            System.out.println("Using test account");
             User testUser = new User("username", "password");
             Calendar now = Calendar.getInstance();
             Calendar now2 = Calendar.getInstance();
@@ -518,7 +528,6 @@ public class Keeper extends javax.swing.JDialog {
         btnMore.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
         btnMore.setForeground(new java.awt.Color(255, 102, 0));
         btnMore.setText("Meer..");
-        btnMore.setOpaque(false);
         btnMore.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnMoreActionPerformed(evt);
@@ -601,7 +610,7 @@ public class Keeper extends javax.swing.JDialog {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 JFrame frame = new JFrame();
-                new Keeper(frame, false);
+                keeper = new Keeper(frame, false);
             }
         });
     }
@@ -616,7 +625,7 @@ public class Keeper extends javax.swing.JDialog {
     private static javax.swing.JLabel lblWeek;
     private static javax.swing.JPanel pnlDateInfo;
     private static javax.swing.JPanel pnlMeetings;
-    private javax.swing.JPanel pnlMore;
+    private static javax.swing.JPanel pnlMore;
     private static javax.swing.JPanel pnlTime;
     private javax.swing.JSeparator sepMore;
     // End of variables declaration//GEN-END:variables

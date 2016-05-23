@@ -6,9 +6,9 @@
 package Agenda.View;
 
 import Agenda.Object.MeetingPanel;
-import Agenda.View.Agenda;
 import Shared.Object.Meeting;
 import Shared.Object.User;
+import Shared.Resource.FileUtil;
 import java.awt.Dimension;
 import java.util.List;
 import javax.swing.JPanel;
@@ -46,7 +46,8 @@ public class Startpage extends javax.swing.JPanel {
         setPreferredSize(new Dimension(944, 530));
         JPanel pnlMeetings = new JPanel();
         pnlMeetings.setLayout(new AbsoluteLayout());
-        User current = Agenda.getCurrentUser();
+        User current = (User) FileUtil.get(FileUtil.LOGGED_USER);
+        System.out.println(current == null);
         List<Meeting> todayMeetings = current.getAgenda().getTodayMeetings();
         int x = 0;
         int y = 0;

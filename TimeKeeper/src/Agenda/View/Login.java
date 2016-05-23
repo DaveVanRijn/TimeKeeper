@@ -6,7 +6,7 @@
 package Agenda.View;
 
 import Shared.Exception.CharNotSupportedException;
-import Agenda.View.Agenda;
+import Keeper.View.Keeper;
 import Shared.Object.User;
 import Shared.Resource.EncryptionKey;
 import Shared.Resource.FileUtil;
@@ -27,6 +27,7 @@ import java.util.logging.Logger;
 public class Login extends javax.swing.JPanel {
 
     private boolean registerPressed = false;
+
     /**
      * Creates new form Login
      */
@@ -38,15 +39,15 @@ public class Login extends javax.swing.JPanel {
         attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
         lblRegister.setFont(font.deriveFont(attributes));
         //MouseListener for register label
-        lblRegister.addMouseListener(new MouseAdapter(){
+        lblRegister.addMouseListener(new MouseAdapter() {
             @Override
-            public void mousePressed(MouseEvent e){
+            public void mousePressed(MouseEvent e) {
                 registerPressed = true;
             }
-            
+
             @Override
-            public void mouseReleased(MouseEvent e){
-                if(registerPressed){
+            public void mouseReleased(MouseEvent e) {
+                if (registerPressed) {
                     registerPressed = false;
                     Agenda.setPanel(new Register());
                 }
@@ -67,8 +68,9 @@ public class Login extends javax.swing.JPanel {
                     if (u.getUsername().equals(username) && u.getPassword().equals(encryptedPass)) {
                         Agenda.setCurrentUser(u);
                         if (Agenda.getCurrentUser() != null) {
-                            Agenda.setPanel(new Startpage());
                             FileUtil.add(FileUtil.LOGGED_USER, u);
+                            Agenda.setPanel(new Startpage());
+                            Keeper.refresh();
                             return;
                         }
                     }

@@ -8,7 +8,9 @@ package Agenda.View;
 import Shared.Exception.CharNotSupportedException;
 import Shared.Object.Meeting;
 import Agenda.Object.PanelList;
+import Keeper.View.Keeper;
 import Shared.Object.User;
+import Shared.Options.Options;
 import Shared.Resource.FileUtil;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -53,7 +55,11 @@ public class Agenda extends javax.swing.JFrame {
 
         pnlMain.setLayout(new BorderLayout());
 
-        FileUtil.read();
+        try {
+            FileUtil.init(true);
+        } catch (IOException ex) {
+            Logger.getLogger(Agenda.class.getName()).log(Level.SEVERE, null, ex);
+        }
         try {
             Calendar now = Calendar.getInstance();
             Calendar now2 = Calendar.getInstance();
@@ -169,7 +175,6 @@ public class Agenda extends javax.swing.JFrame {
         List<User> users = (List<User>) FileUtil.get(FileUtil.USERS);
 
         if (current != null) {
-            setCurrentUser(current);
             //Log user in
             if (selected != null) {
                 //Go to meeting page
@@ -188,16 +193,20 @@ public class Agenda extends javax.swing.JFrame {
     }
 
     private static void refresh() {
-        FileUtil.read();
-        if (mainframe.currentUser != null) {
-            if (FileUtil.get(FileUtil.USERS) != null) {
-                String username = mainframe.currentUser.getUsername();
-                for (User u : (List<User>) FileUtil.get(FileUtil.USERS)) {
-                    if (u.getUsername().equals(username)) {
-                        mainframe.currentUser = u;
+        try {
+            FileUtil.init(true);
+            if (mainframe.currentUser != null) {
+                if (FileUtil.get(FileUtil.USERS) != null) {
+                    String username = mainframe.currentUser.getUsername();
+                    for (User u : (List<User>) FileUtil.get(FileUtil.USERS)) {
+                        if (u.getUsername().equals(username)) {
+                            mainframe.currentUser = u;
+                        }
                     }
                 }
             }
+        } catch (IOException ex) {
+            Logger.getLogger(Agenda.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -205,6 +214,7 @@ public class Agenda extends javax.swing.JFrame {
         currentUser = null;
         FileUtil.remove(FileUtil.LOGGED_USER);
         setPanel(new Login());
+        Keeper.refresh();
     }
 
     private static ActionListener timerAction() {
@@ -233,9 +243,9 @@ public class Agenda extends javax.swing.JFrame {
         jMenu1 = new javax.swing.JMenu();
         btnNewMeeting = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        jMenuItem1 = new javax.swing.JMenuItem();
         btnLogout = new javax.swing.JMenuItem();
         btnExit = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -275,6 +285,16 @@ public class Agenda extends javax.swing.JFrame {
         jMenu1.add(btnNewMeeting);
         jMenu1.add(jSeparator1);
 
+        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jMenuItem1.setText("Options");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem1);
+
         btnLogout.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
         btnLogout.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnLogout.setText("Uitloggen");
@@ -296,10 +316,6 @@ public class Agenda extends javax.swing.JFrame {
         jMenu1.add(btnExit);
 
         menu.add(jMenu1);
-
-        jMenu2.setText("Edit");
-        jMenu2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        menu.add(jMenu2);
 
         setJMenuBar(menu);
 
@@ -348,6 +364,10 @@ public class Agenda extends javax.swing.JFrame {
         setPanel(mainframe.panels.next());
     }//GEN-LAST:event_btnNextActionPerformed
 
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        new Options();
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -380,6 +400,10 @@ public class Agenda extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 mainframe = new Agenda();
+                User u = (User) FileUtil.get(FileUtil.LOGGED_USER);
+                if(u != null){
+                    setCurrentUser(u);
+                }
             }
         });
     }
@@ -391,7 +415,7 @@ public class Agenda extends javax.swing.JFrame {
     private javax.swing.JMenuItem btnNewMeeting;
     private javax.swing.JButton btnNext;
     private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JMenuBar menu;
     private javax.swing.JPanel pnlMain;

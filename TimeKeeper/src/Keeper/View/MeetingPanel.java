@@ -8,6 +8,7 @@ package Keeper.View;
 import Shared.Resource.FileUtil;
 import Shared.Object.Meeting;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -43,6 +44,7 @@ public class MeetingPanel extends javax.swing.JPanel {
         if (meeting != null) {
             lblTime.setText(meeting.getMeetingTime());
             lblTitle.setText(meeting.getTitle());
+            lblTitle.setPreferredSize(new Dimension(150, 25));
 
             MouseAdapter mouseAdap = new MouseAdapter() {
                 @Override
@@ -86,36 +88,18 @@ public class MeetingPanel extends javax.swing.JPanel {
         jSeparator1 = new javax.swing.JSeparator();
         lblTime = new javax.swing.JLabel();
 
+        setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
         lblTitle.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
         lblTitle.setForeground(new java.awt.Color(255, 102, 0));
         lblTitle.setText("Test meeting 1");
+        add(lblTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 47, 180, -1));
+        add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 194, 10));
 
         lblTime.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
         lblTime.setForeground(new java.awt.Color(255, 102, 0));
         lblTime.setText("18:29 - 18:30");
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSeparator1)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblTime)
-                    .addComponent(lblTitle))
-                .addContainerGap(38, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblTime)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblTitle)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        add(lblTime, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 16, 180, -1));
     }// </editor-fold>//GEN-END:initComponents
 
 

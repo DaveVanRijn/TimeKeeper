@@ -179,16 +179,20 @@ public class TrayManager {
         show.setFont(bold);
         blinkOn.setFont(bold);
         Color current = (Color) FileUtil.get(FileUtil.COLOR);
-        if(current.getRGB() == ORANGE.getRGB()){
-            orange.setFont(bold);
-        } else if (current.getRGB() == BLUE.getRGB()){
-            blue.setFont(bold);
-        } else if (current.getRGB() == Color.WHITE.getRGB()){
-            white.setFont(bold);
-        } else if (current.getRGB() == Color.BLACK.getRGB()){
-            black.setFont(bold);
+        if (current != null) {
+            if (current.getRGB() == ORANGE.getRGB()) {
+                orange.setFont(bold);
+            } else if (current.getRGB() == BLUE.getRGB()) {
+                blue.setFont(bold);
+            } else if (current.getRGB() == Color.WHITE.getRGB()) {
+                white.setFont(bold);
+            } else if (current.getRGB() == Color.BLACK.getRGB()) {
+                black.setFont(bold);
+            } else {
+                otherColor.setFont(bold);
+            }
         } else {
-            otherColor.setFont(bold);
+            orange.setFont(bold);
         }
 
         //Make icon
